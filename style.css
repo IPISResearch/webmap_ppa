@@ -1,0 +1,126 @@
+body { margin:0; padding:0; }
+
+#map { position:absolute; top:0; bottom:0; width:100%; }
+
+.leaflet-container .leaflet-control-search {
+  margin-left: 11px;
+  box-shadow: none;
+  background-color: inherit;
+  border: 2px solid rgba(0,0,0,0.2);
+}
+
+.leaflet-control-search .search-button {
+  border-radius: 4px;
+  margin: 0px;
+  padding-left: 1px;
+  padding-right: 1px;
+}
+
+.leaflet-control-search .search-input{
+  border: 0px;
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+  height: 26px;
+  padding: 0 30px 0 6px;
+  margin: 0px -4px 0px 0px;
+}
+
+.leaflet-control-search .search-tip{
+  color: #555;
+  background: #f9f9f9;
+  font-size: 11px;
+}
+
+.leaflet-control-search .search-tooltip{
+  box-shadow: inherit;
+  border-radius: 4px;
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip{
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  border-radius: 4px;
+  background-color: rgba(255,255,255,0.9);
+}
+
+.leaflet-popup-content{
+  margin: 5px 20px 5px 8px;
+}
+
+.menu-ui {
+  position:absolute;
+  top:10px;right:10px;
+  z-index:1000;
+  border-radius:3px;
+  width:120px;
+  border:2px solid rgba(0,0,0,0.2);
+}
+.menu-ui a {
+  font-size:13px;
+  color:#404040;
+  display:block;
+  margin:0;padding:0;
+  padding:10px;
+  text-decoration:none;
+  border-bottom:1px solid rgba(0,0,0,0.25);
+  text-align:center;
+}
+.menu-ui a:first-child {
+  border-radius:3px 3px 0 0;
+  font-weight: bold;
+}
+.menu-ui a:last-child {
+  border:none;
+  border-radius:0 0 3px 3px;
+}
+.menu-ui a:hover {
+  background:#f8f8f8;
+  color:#404040;
+}
+.menu-ui a.active {
+  background:rgba(255,255,255,1);
+  color:#555;
+  font-family: sans-serif;
+}
+.menu-ui a.active:hover {
+  background:#efefef;
+}
+
+.legend {
+  text-align: left;
+  line-height: 18px;
+  border-radius: 4px;
+  border: 2px solid rgba(0,0,0,0.2);
+  color: #555; }
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+.legend .circle {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  margin: 3px;
+  margin-right: 5px;
+}
+
+.info {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background-color: #fff;
+  border-radius: 2px;
+}
+.info h4 {
+  margin: 0 0 5px;
+  color: #404040;
+}
+
+
+path {
+  -webkit-transition:fill 400ms;
+          transition:fill 400ms;
+}
