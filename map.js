@@ -39,15 +39,10 @@ function color_titres(group) {
   '#ffffff';
 }
 function color_ouinon(value) {
-  return value.indexOf("Oui") !== 1 ? '#a8657b' : '#ef9e30';
-}
-function color_minetypes(value) {
-  return value == 'Alluvionaire' ? '#43b7ff' :
-  value == 'Eluvionaire' ? '#ae000e' :
-  '#ffffff';
+  return value.indexOf("Oui") != -1 ? 'rgb(218, 165, 32)' : 'rgba(218, 165, 32, 0.25)';
 }
 function color_mines_default(value) {
-  return '#788292';
+  return 'rgb(218, 165, 32)';
 }
 var color_mines = color_mines_default;
 
@@ -102,8 +97,8 @@ function onEachFeature_mines(feature, layer) {
       "<tr><th>Collectivite</th><td>" + feature.properties.collectivite + "</td></tr>" +
       "<tr><th>Groupement</th><td>" + feature.properties.groupement + "</td></tr>" +
       "<tr><th>Village</th><td>" + feature.properties.village + "</td></tr>" +
-      "<tr><th>Longitude</th><td>" + Math.round(feature.properties.longitude * 1000) / 1000 + "</td></tr>" +
-      "<tr><th>Latitude</th><td>" + Math.round(feature.properties.latitude * 1000) / 1000 + "</td></tr>" +
+      // "<tr><th>Longitude</th><td>" + Math.round(feature.properties.longitude * 1000) / 1000 + "</td></tr>" +
+      // "<tr><th>Latitude</th><td>" + Math.round(feature.properties.latitude * 1000) / 1000 + "</td></tr>" +
       "<tr><th class='bottomline'>Date de visite</th><td class='bottomline'>" + feature.properties.visit_date + "</td></tr>" +
       "<tr><th>Type d'exploitation</th><td>" + feature.properties.exploitation + "</td></tr>" +
       "<tr><th>Nombre de travailleurs</th><td>" + feature.properties.workers_numb + "</td></tr>" +
@@ -134,33 +129,32 @@ function onEachFeature_mines(feature, layer) {
 // Add interactivity
 [
   {name: "All mines", color_function: color_mines_default},
-  {name: "Armed groups", column: "name", color_function: color_ouinon, categories: [1, 0], labels: ['Yes', 'No']},
-  {name: "Alluvionaire", column: "exploitation_alluvionaire", color_function: color_ouinon, categories: [1, 0], labels: ['Yes', 'No']},
-  {name: "Services", column: "name", color_function: color_ouinon, categories: [1, 0], labels: ['Yes', 'No']}
+  {name: "Traitement au mercure", column: "mercury", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
+  {name: "Services", column: "name", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']}
 ].forEach(function(properties) {
   var link = document.createElement('a');
       link.href = '#';
       link.className = 'active';
       link.innerHTML = properties.name;
 
-  //link.onclick = function(e) {
-  //    e.preventDefault();
-  //    e.stopPropagation();
-//
-  //    color_mines = properties.color_function;
-//
-  //    layer_mines.eachLayer(function(featureInstanceLayer) {
-  //      featureInstanceLayer.setStyle({
-  //        fillColor : color_mines(featureInstanceLayer.feature.properties[properties.column])
-  //      });
-  //    });
-//
-  //    legend.properties = properties;
-  //    legend.remove();
-  //    if(properties.name != "All mines") {
-  //      legend.addTo(map);
-  //    }
-  //};
+  link.onclick = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      color_mines = properties.color_function;
+
+      layer_mines.eachLayer(function(featureInstanceLayer) {
+        featureInstanceLayer.setStyle({
+          fillColor : color_mines(featureInstanceLayer.feature.properties[properties.column])
+        });
+      });
+
+      legend.properties = properties;
+      legend.remove();
+      if(properties.name != "All mines") {
+        legend.addTo(map);
+      }
+  };
 
   menu.appendChild(link);
 });
