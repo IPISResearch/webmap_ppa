@@ -44,45 +44,73 @@ body { margin:0; padding:0; }
 
 .leaflet-popup-content{
   margin: 5px 20px 5px 8px;
+  line-height: 1;
 }
+
+table.infotable th {
+  padding-bottom: 1px;
+  padding-top: 1px;
+  padding-right: 5px;
+  padding-left: 0px;
+}
+
+table.infotable td {
+  padding-bottom: 1px;
+  padding-top: 1px;
+  padding-right: 0px;
+  padding-left: 5px;
+}
+
+table.infotable th.title, table.infotable td.title {
+  font-size: 14px;
+}
+
+table.infotable th.bottomline, table.infotable td.bottomline {
+  border-bottom: 1px solid #ececec;
+  padding-bottom: 2px;
+}
+
+.notbold {
+  font-weight:normal;
+}​
 
 .menu-ui {
   position:absolute;
-  top:10px;right:10px;
-  z-index:1000;
-  border-radius:3px;
-  width:120px;
-  border:2px solid rgba(0,0,0,0.2);
+  top: 10px;right: 10px;
+  z-index: 1000;
+  border-radius: 3px;
+  width: 120px;
+  border: 2px solid rgba(0,0,0,0.2);
 }
 .menu-ui a {
-  font-size:13px;
-  color:#404040;
-  display:block;
-  margin:0;padding:0;
-  padding:10px;
-  text-decoration:none;
-  border-bottom:1px solid rgba(0,0,0,0.25);
-  text-align:center;
+  font-size: 13px;
+  color: #404040;
+  display: block;
+  margin: 0;
+  padding: 10px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,0,0,0.25);
+  text-align: center;
 }
 .menu-ui a:first-child {
-  border-radius:3px 3px 0 0;
+  border-radius: 3px 3px 0 0;
   font-weight: bold;
 }
 .menu-ui a:last-child {
   border:none;
-  border-radius:0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
 }
 .menu-ui a:hover {
-  background:#f8f8f8;
-  color:#404040;
+  background: #f8f8f8;
+  color: #404040;
 }
 .menu-ui a.active {
-  background:rgba(255,255,255,1);
-  color:#555;
+  background: rgba(255,255,255,1);
+  color: #555;
   font-family: sans-serif;
 }
 .menu-ui a.active:hover {
-  background:#efefef;
+  background: #efefef;
 }
 
 .legend {

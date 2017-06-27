@@ -38,8 +38,8 @@ function color_titres(group) {
   group == 'ZIN' ? '#ae000e' :
   '#ffffff';
 }
-function color_yesno(bool) {
-  return bool ? '#a8657b' : '#ef9e30';
+function color_ouinon(value) {
+  return value.indexOf("Oui") !== 1 ? '#a8657b' : '#ef9e30';
 }
 function color_minetypes(value) {
   return value == 'Alluvionaire' ? '#43b7ff' :
@@ -91,23 +91,40 @@ function style_titres(feature) {
 // }
 
 // Define popups and tooltips
-function translate(value){
-  return value == 1 ? 'Oui' :
-  value == "1" ? 'Oui' :
-  value == 0 ? 'Non' :
-  value == "0" ? 'Non' :
-  value;
-}
 function onEachFeature_mines(feature, layer) {
   // Popup if feature has the desired content
-  if (feature.properties && feature.properties.name) {
+  if (feature.properties) {
     layer.bindPopup(
-      "<b>Site name:</b> " + feature.properties.name + "<br>" +
-      "<b>Longitude:</b> " + Math.round(feature.properties.longitude * 1000) / 1000 + "<br>" +
-      "<b>Latitude:</b> " + Math.round(feature.properties.latitude * 1000) / 1000 + "<br>" +
-      "<b>Mine alluvionaire:</b> " + translate(feature.properties.exploitation_alluvionaire) + "<br>"
+      "<table class='infotable'><tbody>" +
+      "<tr><th>Site</th><td>" + feature.properties.name_site + "</td></tr>" +
+      "<tr><th>Chantier</th><td>" + feature.properties.name + "</td></tr>" +
+      "<tr><th class='bottomline'>Pcode</th><td class='bottomline'>" + feature.properties.pcode + "</td></tr>" +
+      "<tr><th>Collectivite</th><td>" + feature.properties.collectivite + "</td></tr>" +
+      "<tr><th>Groupement</th><td>" + feature.properties.groupement + "</td></tr>" +
+      "<tr><th>Village</th><td>" + feature.properties.village + "</td></tr>" +
+      "<tr><th>Longitude</th><td>" + Math.round(feature.properties.longitude * 1000) / 1000 + "</td></tr>" +
+      "<tr><th>Latitude</th><td>" + Math.round(feature.properties.latitude * 1000) / 1000 + "</td></tr>" +
+      "<tr><th class='bottomline'>Date de visite</th><td class='bottomline'>" + feature.properties.visit_date + "</td></tr>" +
+      "<tr><th>Type d'exploitation</th><td>" + feature.properties.exploitation + "</td></tr>" +
+      "<tr><th>Nombre de travailleurs</th><td>" + feature.properties.workers_numb + "</td></tr>" +
+      "<tr><th class='bottomline'>Nombre de puits</th><td class='bottomline'>" + feature.properties.pits_numb + "</td></tr>" +
+      "<tr><th>Présence du SAESSCAM</th><td>" + feature.properties.state_saesscam + "</td></tr>" +
+      "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.state_saesscam_freq + "</td></tr>" +
+      "<tr><th>Présence de la Division des Mines</th><td>" + feature.properties.state_divmin + "</td></tr>" +
+      "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.state_divmin_freq + "</td></tr>" +
+      "<tr><th class='bottomline'>Services d’état prélevant des taxes</th><td class='bottomline'>" + feature.properties.state_names_taxing + "</td></tr>" +
+      "<tr><th>Protections</th><td>" + feature.properties.protection + "</td></tr>" +
+      "<tr><th>Femmes enceintes</th><td>" + feature.properties.womenpregnant + "</td></tr>" +
+      "<tr><th>Structures sanitaires séparées</th><td>" + feature.properties.womensani + "</td></tr>" +
+      "<tr><th>Accidents dans les 3 mois passés</th><td>" + feature.properties.accidents + "</td></tr>" +
+      "<tr><th class='notbold'>&nbsp;&nbsp;Causes</th><td>" + feature.properties.accidentcauses + "</td></tr>" +
+      "<tr><th>Travaille d'enfants</th><td>" + feature.properties.childunder15 + "</td></tr>" +
+      "<tr><th class='notbold'>&nbsp;&nbsp;Types de travaille</th><td>" + feature.properties.childunder15work + "</td></tr>" +
+      "<tr><th>Utilisation de mercure sur le site </th><td>" + feature.properties.mercury + "</td></tr>" +
+      "<tbody></table>",
+      {maxWidth : 600}
     );
-    layer.bindTooltip("<b>Site:</b> " + feature.properties.name);
+    layer.bindTooltip(feature.properties.name_site + (feature.properties.name != feature.properties.name_site ? " - " + feature.properties.name : ""));
   }
 }
 
@@ -117,33 +134,33 @@ function onEachFeature_mines(feature, layer) {
 // Add interactivity
 [
   {name: "All mines", color_function: color_mines_default},
-  {name: "Armed groups", column: "name", color_function: color_yesno, categories: [1, 0], labels: ['Yes', 'No']},
-  {name: "Alluvionaire", column: "exploitation_alluvionaire", color_function: color_yesno, categories: [1, 0], labels: ['Yes', 'No']},
-  {name: "Services", column: "name", color_function: color_yesno, categories: [1, 0], labels: ['Yes', 'No']}
+  {name: "Armed groups", column: "name", color_function: color_ouinon, categories: [1, 0], labels: ['Yes', 'No']},
+  {name: "Alluvionaire", column: "exploitation_alluvionaire", color_function: color_ouinon, categories: [1, 0], labels: ['Yes', 'No']},
+  {name: "Services", column: "name", color_function: color_ouinon, categories: [1, 0], labels: ['Yes', 'No']}
 ].forEach(function(properties) {
   var link = document.createElement('a');
       link.href = '#';
       link.className = 'active';
       link.innerHTML = properties.name;
 
-  link.onclick = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      color_mines = properties.color_function;
-
-      layer_mines.eachLayer(function(featureInstanceLayer) {
-        featureInstanceLayer.setStyle({
-          fillColor : color_mines(featureInstanceLayer.feature.properties[properties.column])
-        });
-      });
-
-      legend.properties = properties;
-      legend.remove();
-      if(properties.name != "All mines") {
-        legend.addTo(map);
-      }
-  };
+  //link.onclick = function(e) {
+  //    e.preventDefault();
+  //    e.stopPropagation();
+//
+  //    color_mines = properties.color_function;
+//
+  //    layer_mines.eachLayer(function(featureInstanceLayer) {
+  //      featureInstanceLayer.setStyle({
+  //        fillColor : color_mines(featureInstanceLayer.feature.properties[properties.column])
+  //      });
+  //    });
+//
+  //    legend.properties = properties;
+  //    legend.remove();
+  //    if(properties.name != "All mines") {
+  //      legend.addTo(map);
+  //    }
+  //};
 
   menu.appendChild(link);
 });
