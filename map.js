@@ -1,5 +1,5 @@
 // Create map and ui and
-var map = L.map('map').setView([1.03, 29.13], 10).setMinZoom(8);
+var map = L.map('map').setView([1.03, 29.13], 10).setMinZoom(9);
 var menu = document.getElementById('menu-ui');
 
 // Specifying access tokens
@@ -20,17 +20,18 @@ map.createPane("titres").style.zIndex = 250;
 // Add points
 var layer_mines = new L.GeoJSON.AJAX('data/data_map.geojson', {
   pointToLayer: function (feature, latlng) {
-    return L.circleMarker(latlng, style_mines);
+    return L.circleMarker(latlng, style_mines(feature));
   },
   onEachFeature: onEachFeature_mines
 }).addTo(map);
 
 // Add titres
 var layer_titres = new L.GeoJSON.AJAX('data/titres_2016_mambasa.geojson',{
-  style: style_titres
+  style: style_titres,
+  onEachFeature: onEachFeature_titres
 }).addTo(map);
 
-// Color function
+// Color functions
 function color_titres(group) {
   return group == 'PR' ? '#43b7ff' :
   group == 'PE' ? '#36ae71' :
@@ -47,14 +48,16 @@ function color_mines_default(value) {
 var color_mines = color_mines_default;
 
 // Style points
-var style_mines = {
-  pane: 'mines',
-  radius: 5,
-  weight: 1,
-  color: "#ffffff",
-  opacity: 0.5,
-  fillColor: color_mines(),
-  fillOpacity: 1
+function style_mines(feature) {
+  return {
+    pane: 'mines',
+    radius: (10 - 4) / (200 - 0) * (feature.properties.workers_numb - 0) + 4, //
+    weight: 1,
+    color: "#ffffff",
+    opacity: 0.5,
+    fillColor: color_mines(),
+    fillOpacity: 1
+  }
 };
 
 // Style titres
@@ -68,69 +71,78 @@ function style_titres(feature) {
   };
 }
 
-//   // Highlights
-//   function highlight_mine(e) {
-//     var layer = e.target;
-//
-//     layer.setStyle({
-//         weight: 4,
-//         color: '#ffffff'
-//       });
-//
-//     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-//         layer.bringToFront();
-//     }
-// }
-// function resetHighlight(e) {
-//     layer_mines.resetStyle(e.target);
-// }
-
 // Define popups and tooltips
 function onEachFeature_mines(feature, layer) {
-  // Popup if feature has the desired content
-  if (feature.properties) {
-    layer.bindPopup(
-      "<table class='infotable'><tbody>" +
-      "<tr><th>Site</th><td>" + feature.properties.name_site + "</td></tr>" +
-      "<tr><th>Chantier</th><td>" + feature.properties.name + "</td></tr>" +
-      "<tr><th class='bottomline'>Pcode</th><td class='bottomline'>" + feature.properties.pcode + "</td></tr>" +
-      "<tr><th>Collectivite</th><td>" + feature.properties.collectivite + "</td></tr>" +
-      "<tr><th>Groupement</th><td>" + feature.properties.groupement + "</td></tr>" +
-      "<tr><th>Village</th><td>" + feature.properties.village + "</td></tr>" +
-      // "<tr><th>Longitude</th><td>" + Math.round(feature.properties.longitude * 1000) / 1000 + "</td></tr>" +
-      // "<tr><th>Latitude</th><td>" + Math.round(feature.properties.latitude * 1000) / 1000 + "</td></tr>" +
-      "<tr><th class='bottomline'>Date de visite</th><td class='bottomline'>" + feature.properties.visit_date + "</td></tr>" +
-      "<tr><th>Type d'exploitation</th><td>" + feature.properties.exploitation + "</td></tr>" +
-      "<tr><th>Nombre de travailleurs</th><td>" + feature.properties.workers_numb + "</td></tr>" +
-      "<tr><th class='bottomline'>Nombre de puits</th><td class='bottomline'>" + feature.properties.pits_numb + "</td></tr>" +
-      "<tr><th>Présence du SAESSCAM</th><td>" + feature.properties.state_saesscam + "</td></tr>" +
-      "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.state_saesscam_freq + "</td></tr>" +
-      "<tr><th>Présence de la Division des Mines</th><td>" + feature.properties.state_divmin + "</td></tr>" +
-      "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.state_divmin_freq + "</td></tr>" +
-      "<tr><th class='bottomline'>Services d’état prélevant des taxes</th><td class='bottomline'>" + feature.properties.state_names_taxing + "</td></tr>" +
-      "<tr><th>Protections</th><td>" + feature.properties.protection + "</td></tr>" +
-      "<tr><th>Femmes enceintes</th><td>" + feature.properties.womenpregnant + "</td></tr>" +
-      "<tr><th>Structures sanitaires séparées</th><td>" + feature.properties.womensani + "</td></tr>" +
-      "<tr><th>Accidents dans les 3 mois passés</th><td>" + feature.properties.accidents + "</td></tr>" +
-      "<tr><th class='notbold'>&nbsp;&nbsp;Causes</th><td>" + feature.properties.accidentcauses + "</td></tr>" +
-      "<tr><th>Travaille d'enfants</th><td>" + feature.properties.childunder15 + "</td></tr>" +
-      "<tr><th class='notbold'>&nbsp;&nbsp;Types de travaille</th><td>" + feature.properties.childunder15work + "</td></tr>" +
-      "<tr><th>Utilisation de mercure sur le site </th><td>" + feature.properties.mercury + "</td></tr>" +
-      "<tbody></table>",
-      {maxWidth : 600}
-    );
-    layer.bindTooltip(feature.properties.name_site + (feature.properties.name != feature.properties.name_site ? " - " + feature.properties.name : ""));
-  }
+  layer.bindPopup(
+    "<table class='infotable'><tbody>" +
+    "<tr><th>Site</th><td>" + feature.properties.name_site + "</td></tr>" +
+    "<tr><th>Chantier</th><td>" + feature.properties.name + "</td></tr>" +
+    "<tr><th class='bottomline'>Pcode</th><td class='bottomline'>" + feature.properties.pcode + "</td></tr>" +
+    "<tr><th>Collectivite</th><td>" + feature.properties.collectivite + "</td></tr>" +
+    "<tr><th>Groupement</th><td>" + feature.properties.groupement + "</td></tr>" +
+    "<tr><th>Village</th><td>" + feature.properties.village + "</td></tr>" +
+    // "<tr><th>Longitude</th><td>" + Math.round(feature.properties.longitude * 1000) / 1000 + "</td></tr>" +
+    // "<tr><th>Latitude</th><td>" + Math.round(feature.properties.latitude * 1000) / 1000 + "</td></tr>" +
+    "<tr><th class='bottomline'>Date de visite</th><td class='bottomline'>" + feature.properties.visit_date + "</td></tr>" +
+    "<tr><th>Type d'exploitation</th><td>" + feature.properties.exploitation + "</td></tr>" +
+    "<tr><th>Nombre de travailleurs</th><td>" + feature.properties.workers_numb + "</td></tr>" +
+    "<tr><th class='bottomline'>Nombre de puits</th><td class='bottomline'>" + feature.properties.pits_numb + "</td></tr>" +
+    "<tr><th>Présence du SAESSCAM</th><td>" + feature.properties.state_saesscam + "</td></tr>" +
+    "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.state_saesscam_freq + "</td></tr>" +
+    "<tr><th>Présence de la Division des Mines</th><td>" + feature.properties.state_divmin + "</td></tr>" +
+    "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.state_divmin_freq + "</td></tr>" +
+    "<tr><th class='bottomline'>Services d’état prélevant des taxes</th><td class='bottomline'>" + feature.properties.state_names_taxing + "</td></tr>" +
+    "<tr><th>Présence des FARDC</th><td>" + feature.properties.actor_fardc + "</td></tr>" +
+    "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.actor_fardc_freq + "</td></tr>" +
+    "<tr><th class='notbold'>&nbsp;&nbsp;Interférences</th><td>" + feature.properties.actor_fardc_interferences + "</td></tr>" +
+    "<tr><th>Présence d'autres groupes armées</th><td>" + feature.properties.actor_nonfardc + "</td></tr>" +
+    "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.actor_nonfardc_freq + "</td></tr>" +
+    "<tr><th class='notbold bottomline'>&nbsp;&nbsp;Interférences</th><td class='bottomline'>" + feature.properties.actor_nonfardc_interferences + "</td></tr>" +
+    // "<tr><th>Protections</th><td>" + feature.properties.protection + "</td></tr>" +
+    "<tr><th>Femmes enceintes</th><td>" + feature.properties.womenpregnant + "</td></tr>" +
+    "<tr><th>Structures sanitaires séparées</th><td>" + feature.properties.womensani + "</td></tr>" +
+    "<tr><th>Accidents dans les 3 mois passés</th><td>" + feature.properties.accidents + "</td></tr>" +
+    "<tr><th class='notbold'>&nbsp;&nbsp;Causes</th><td>" + feature.properties.accidentcauses + "</td></tr>" +
+    "<tr><th>Travail d'enfants</th><td>" + feature.properties.childunder15 + "</td></tr>" +
+    "<tr><th class='notbold'>&nbsp;&nbsp;Types de travail</th><td>" + feature.properties.childunder15work + "</td></tr>" +
+    "<tr><th>Utilisation de mercure sur le site </th><td>" + feature.properties.mercury + "</td></tr>" +
+    "<tbody></table>",
+    {maxWidth : 500}
+  );
+  layer.bindTooltip(feature.properties.name_site + (feature.properties.name != feature.properties.name_site ? " - " + feature.properties.name : ""));
+}
+function onEachFeature_titres(feature, layer) {
+  layer.bindTooltip((feature.properties.group != "ZEA" ? feature.properties.group + " - " : "") + feature.properties.name, {direction: 'center', permanent: true, pane: 'titres', className: 'leaflet-tooltip-titres'});
 }
 
-// Add layer control
-// L.control.layers(null, {"Mining concessions": group_titres}).addTo(map);
+// Add legend
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+  var div = L.DomUtil.create('div', 'legend');
+  var divcontent = L.DomUtil.create('div', 'info');
+
+  divcontent.innerHTML += '<h4> Légende </h4>';
+  for (var i = 0; i < legend.properties.categories.length; i++) {
+    divcontent.innerHTML +=
+    '<i class="circle" style="background:' + color_mines(legend.properties.categories[i]) + '"></i> ' +
+    legend.properties.labels[i] + (i < (legend.properties.categories.length - 1) ? '<br>' : '');
+  }
+  div.appendChild(divcontent);
+
+  return div;
+};
 
 // Add interactivity
 [
-  {name: "All mines", color_function: color_mines_default},
+  {name: "Toutes les mines", color_function: color_mines_default},
   {name: "Traitement au mercure", column: "mercury", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
-  {name: "Services", column: "name", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']}
+  {name: "Présence de services d'état", column: "state_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
+  {name: "Présence de groupes armées", column: "actor_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
+  {name: "Femmes enceintes", column: "womenpregnant", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
+  {name: "Accidents récents", column: "accidents", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
+  {name: "Travail d'enfants", column: "childunder15", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']}
 ].forEach(function(properties) {
   var link = document.createElement('a');
       link.href = '#';
@@ -151,13 +163,31 @@ function onEachFeature_mines(feature, layer) {
 
       legend.properties = properties;
       legend.remove();
-      if(properties.name != "All mines") {
+      if(properties.name != "Toutes les mines") {
         legend.addTo(map);
       }
   };
 
   menu.appendChild(link);
 });
+
+// Add infobox
+var infobox = L.control({position: 'bottomleft'});
+
+infobox.onAdd = function (map) {
+
+  var div = L.DomUtil.create('div', 'legend');
+  var divcontent = L.DomUtil.create('div', 'info infobox');
+
+  divcontent.innerHTML += '<h4> Mambasa PPA </h4>';
+  divcontent.innerHTML += '<img src="img/ipislogo.png" alt="IPIS Logo" align="right" style="width:50px">'
+  divcontent.innerHTML += 'Cette carte interactive accompagne un rapport publié par <a href="http://ipisresearch.be">IPIS</a> en Juin 2017.<br>'
+  divcontent.innerHTML += '<div class="credits">Rapport: Guillaume de Brier, Hans Merket. Cartographie: Manuel Claeys Bouuaert. Contact: <a href="mailto:mapping@ipisresearch.be">mapping@ipisresearch.be</a></div>';
+  div.appendChild(divcontent);
+
+  return div;
+};
+infobox.addTo(map);
 
 // Add search layer
 var searchControl = new L.Control.Search({
@@ -172,22 +202,3 @@ searchControl.on('search:locationfound', function(e) {
   if(e.layer._popup) e.layer.openPopup();
 });
 map.addControl( searchControl );  //inizialize search control
-
-// Add legend
-var legend = L.control({position: 'bottomright'});
-
-legend.onAdd = function (map) {
-
-  var div = L.DomUtil.create('div', 'legend');
-  var divcontent = L.DomUtil.create('div', 'info');
-
-  divcontent.innerHTML += '<h4> Legend </h4>';
-  for (var i = 0; i < legend.properties.categories.length; i++) {
-    divcontent.innerHTML +=
-    '<i class="circle" style="background:' + color_mines(legend.properties.categories[i]) + '"></i> ' +
-    legend.properties.labels[i] + (i < (legend.properties.categories.length - 1) ? '<br>' : '');
-  }
-  div.appendChild(divcontent);
-
-  return div;
-};

@@ -1,5 +1,10 @@
 body { margin:0; padding:0; }
 
+path {
+  -webkit-transition:fill 400ms;
+          transition:fill 400ms;
+}
+
 #map { position:absolute; top:0; bottom:0; width:100%; }
 
 .leaflet-container .leaflet-control-search {
@@ -28,7 +33,7 @@ body { margin:0; padding:0; }
 .leaflet-control-search .search-tip{
   color: #555;
   background: #f9f9f9;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .leaflet-control-search .search-tooltip{
@@ -47,6 +52,16 @@ body { margin:0; padding:0; }
   line-height: 1;
 }
 
+.leaflet-tooltip-titres{
+  background: none;
+  border: none;
+  border-color: none;
+  box-shadow: none;
+  text-shadow: 0px 0px 4px white;
+  font-size: 10px;
+  color: grey;
+}
+
 table.infotable th {
   padding-bottom: 1px;
   padding-top: 1px;
@@ -61,10 +76,6 @@ table.infotable td {
   padding-left: 5px;
 }
 
-table.infotable th.title, table.infotable td.title {
-  font-size: 14px;
-}
-
 table.infotable th.bottomline, table.infotable td.bottomline {
   border-bottom: 1px solid #ececec;
   padding-bottom: 2px;
@@ -75,7 +86,7 @@ table.infotable th.bottomline, table.infotable td.bottomline {
   top: 10px;right: 10px;
   z-index: 1000;
   border-radius: 3px;
-  width: 120px;
+  width: 200px;
   border: 2px solid rgba(0,0,0,0.2);
 }
 .menu-ui a {
@@ -134,21 +145,28 @@ table.infotable th.bottomline, table.infotable td.bottomline {
 
 .info {
   padding: 6px 8px;
-  font: 14px/16px Arial, Helvetica, sans-serif;
+  font: 12px/16px Arial, Helvetica, sans-serif;
   background-color: #fff;
   border-radius: 2px;
 }
+
 .info h4 {
   margin: 0 0 5px;
   color: #404040;
 }
 
+.infobox {
+  font-size: 12px;
+  width: 300px;
+  min-height: 80px;
+}
+
+.infobox .credits{
+  margin-top: 4px;
+  font-size: 8px;
+  line-height: 1.2;
+}
+
 .notbold {
   font-weight:normal;
 }​
-
-
-path {
-  -webkit-transition:fill 400ms;
-          transition:fill 400ms;
-}
