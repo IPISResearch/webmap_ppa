@@ -124,11 +124,17 @@ legend.onAdd = function (map) {
   var divcontent = L.DomUtil.create('div', 'info');
 
   divcontent.innerHTML += '<h4> Légende </h4>';
+  divcontent.innerHTML += '<div class="legendgroup">Mines</div>'
   for (var i = 0; i < legend.properties.categories.length; i++) {
-    divcontent.innerHTML +=
-    '<i class="circle" style="background:' + color_mines(legend.properties.categories[i]) + '"></i> ' +
-    legend.properties.labels[i] + (i < (legend.properties.categories.length - 1) ? '<br>' : '');
+    divcontent.innerHTML += '<i class="circle" style="background:' + color_mines(legend.properties.categories[i]) + '"></i> ' +  legend.properties.labels[i] + '<br>';
   }
+  divcontent.innerHTML += '<div class="legendgroup">Titres miniers</div>'
+  divcontent.innerHTML += '<i class="box" style="background:#89bac3"></i> Permis de recherche<br>'
+  divcontent.innerHTML += '<i class="box" style="background:#9abf83"></i> Permis d&apos;exploitation<br>'
+  divcontent.innerHTML += '<i class="box" style="background:#c3b0bf"></i> Zone d&apos;exploitation artisanale<br>'
+  divcontent.innerHTML += '<i class="box" style="background:#d88289"></i> Zone interdites<br>'
+  divcontent.innerHTML += '<div class="legendgroup">Autres</div>'
+  divcontent.innerHTML += '<i class="box" style="background:#acdc5d"></i> Parc ou réserve'
   div.appendChild(divcontent);
 
   return div;
@@ -136,23 +142,28 @@ legend.onAdd = function (map) {
 
 // Add interactivity
 [
-  {name: "Toutes les mines", color_function: color_mines_default},
-  {name: "Traitement au mercure", column: "mercury", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
-  {name: "Présence de services d'état", column: "state_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
-  {name: "Présence de groupes armées", column: "actor_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
-  {name: "Femmes enceintes", column: "womenpregnant", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
-  {name: "Accidents récents", column: "accidents", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']},
-  {name: "Travail d'enfants", column: "childunder15", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ['Oui', 'Non']}
+  {id: 0, name: "Toutes les mines", color_function: color_mines_default, categories: ['Oui'], labels: ["Mine"]},
+  {id: 1, name: "Traitement au mercure", column: "mercury", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Traitement au mercure", "Pas de traitement au mercure"]},
+  {id: 2, name: "Présence de services d'état", column: "state_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Présence de services d'état", "Pas de présence de services d'état"]},
+  {id: 3, name: "Présence de groupes armées", column: "actor_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Présence de groupes armées", "Pas de présence de groupes armées"]},
+  {id: 4, name: "Femmes enceintes", column: "womenpregnant", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Femmes enceintes", "Pas de femmes enceintes"]},
+  {id: 5, name: "Accidents récents", column: "accidents", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Accidents récents", "Pas d'accidents récents"]},
+  {id: 6, name: "Travail d'enfants", column: "childunder15", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Travail d'enfants", "Pas de travail d'enfants"]}
 ].forEach(function(properties) {
   var link = document.createElement('a');
       link.href = '#';
-      link.className = 'active';
+      link.id = properties.id;
+      link.className = '';
       link.innerHTML = properties.name;
 
   link.onclick = function(e) {
       e.preventDefault();
       e.stopPropagation();
 
+      for (var i = 0; i < menu.children.length; i++) {
+        menu.children[i].className = '';
+      }
+      this.className = 'active';
       color_mines = properties.color_function;
 
       layer_mines.eachLayer(function(featureInstanceLayer) {
@@ -163,26 +174,26 @@ legend.onAdd = function (map) {
 
       legend.properties = properties;
       legend.remove();
-      if(properties.name != "Toutes les mines") {
-        legend.addTo(map);
-      }
-  };
+      legend.addTo(map);
+    }
 
   menu.appendChild(link);
 });
+document.getElementById("0").click()
 
 // Add infobox
 var infobox = L.control({position: 'bottomleft'});
 
 infobox.onAdd = function (map) {
 
-  var div = L.DomUtil.create('div', 'legend');
-  var divcontent = L.DomUtil.create('div', 'info infobox');
+  var div = L.DomUtil.create('div', 'infobox');
+  var divcontent = L.DomUtil.create('div', 'info');
 
-  divcontent.innerHTML += '<h4> Mambasa PPA </h4>';
+  divcontent.innerHTML += '<h4> Sites miniers aurifères à Mambasa, RDC </h4>';
   divcontent.innerHTML += '<img src="img/ipislogo.png" alt="IPIS Logo" align="right" style="width:50px">'
-  divcontent.innerHTML += 'Cette carte interactive accompagne un rapport publié par <a href="http://ipisresearch.be">IPIS</a> en Juin 2017.<br>'
-  divcontent.innerHTML += '<div class="credits">Rapport: Guillaume de Brier, Hans Merket. Cartographie: Manuel Claeys Bouuaert. Contact: <a href="mailto:mapping@ipisresearch.be">mapping@ipisresearch.be</a></div>';
+  divcontent.innerHTML += '<p>Cliquez sur une mine pour découvrir ces characteristiques. Cliquez sur les options dans le coin supérieur droit pour afficer les mines concernées.</p>'
+  divcontent.innerHTML += '<p>Cette carte interactive accompagne le <a href="http://ipisresearch.be">rapport</a> du projet pilote de monitoring de l&apos;or artisanal de Mambasa, Ituri, RDC. Ce pilote a été financé par le <a href="http://www.resolv.org/site-ppa/">PPA</a> et effectuer par <a href="http://ipisresearch.be">IPIS</a> en Juin 2017, après une collecte de données de Janvier 2017 à Juin 2017.</p>'
+  divcontent.innerHTML += '<div class="credits">Rapport: Guillaume de Brier, Hans Merket. Cartographie: Manuel Claeys Bouuaert. Sources: IPIS, <a href="http://portals.flexicadastre.com/drc/en/">CAMI</a> (titres miniers). Contact: <a href="mailto:mapping@ipisresearch.be">mapping@ipisresearch.be</a></div>';
   div.appendChild(divcontent);
 
   return div;

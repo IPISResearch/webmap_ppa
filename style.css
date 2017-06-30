@@ -14,6 +14,10 @@ path {
   border: 2px solid rgba(0,0,0,0.2);
 }
 
+.leaflet-container a {
+  text-decoration: none;
+}
+
 .leaflet-control-search .search-button {
   border-radius: 4px;
   margin: 0px;
@@ -90,8 +94,10 @@ table.infotable th.bottomline, table.infotable td.bottomline {
   border: 2px solid rgba(0,0,0,0.2);
 }
 .menu-ui a {
+  background: rgba(255,255,255,1);
   font-size: 13px;
-  color: #404040;
+  font-family: sans-serif;
+  color: #555;
   display: block;
   margin: 0;
   padding: 10px;
@@ -112,35 +118,42 @@ table.infotable th.bottomline, table.infotable td.bottomline {
   color: #404040;
 }
 .menu-ui a.active {
-  background: rgba(255,255,255,1);
+  background: #ededed;
   color: #555;
   font-family: sans-serif;
 }
 .menu-ui a.active:hover {
-  background: #efefef;
+  background: #e8e8e8;
 }
 
-.legend {
+.legend, .infobox {
   text-align: left;
   line-height: 18px;
   border-radius: 4px;
   border: 2px solid rgba(0,0,0,0.2);
   color: #555; }
 
-.legend i {
-  width: 18px;
-  height: 18px;
+.legend .box {
   float: left;
-  margin-right: 8px;
-  opacity: 0.7;
+  width: 10px;
+  height: 10px;
+  margin: 3px;
+  margin-right: 5px;
 }
 
 .legend .circle {
+  float: left;
   border-radius: 50%;
   width: 10px;
   height: 10px;
   margin: 3px;
   margin-right: 5px;
+}
+
+.legend .legendgroup{
+  margin-top: 2px;
+  margin-bottom: 1px;
+  font-weight: bold;
 }
 
 .info {
@@ -153,10 +166,10 @@ table.infotable th.bottomline, table.infotable td.bottomline {
 .info h4 {
   margin: 0 0 5px;
   color: #404040;
+  font-size: 13px;
 }
 
 .infobox {
-  font-size: 12px;
   width: 300px;
   min-height: 80px;
 }
