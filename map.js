@@ -1,6 +1,7 @@
 // Create map and ui and
 var map = L.map('map').setView([1.03, 29.13], 10).setMinZoom(9);
-var menu = document.getElementById('menu-ui');
+var switcher = document.getElementById('switcher');
+var filter = document.getElementById('filter');
 
 // Specifying access tokens
 var mapboxAccessToken = "pk.eyJ1IjoiaXBpc3Jlc2VhcmNoIiwiYSI6IklBazVQTWcifQ.K13FKWN_xlKPJFj9XjkmbQ";
@@ -18,12 +19,18 @@ map.createPane("mines").style.zIndex = 450;
 map.createPane("titres").style.zIndex = 250;
 
 // Add points
-var layer_mines = new L.GeoJSON.AJAX('data/data_map.geojson', {
+var layer_mines_dry = new L.GeoJSON.AJAX('data/data_map_dry.geojson', {
   pointToLayer: function (feature, latlng) {
     return L.circleMarker(latlng, style_mines(feature));
   },
   onEachFeature: onEachFeature_mines
-}).addTo(map);
+})
+var layer_mines_wet = new L.GeoJSON.AJAX('data/data_map_wet.geojson', {
+  pointToLayer: function (feature, latlng) {
+    return L.circleMarker(latlng, style_mines(feature));
+  },
+  onEachFeature: onEachFeature_mines
+})
 
 // Add titres
 var layer_titres = new L.GeoJSON.AJAX('data/titres_2016_mambasa.geojson',{
@@ -71,6 +78,19 @@ function style_titres(feature) {
   };
 }
 
+// Add search layer
+var searchControl = new L.Control.Search({
+  layer: layer_mines_dry,
+  propertyName: 'name',
+  marker: false,
+  moveToLocation: function(latlng, title, map) {
+    map.setView(latlng, 12);
+  }
+});
+searchControl.on('search:locationfound', function(e) {
+  if(e.layer._popup) e.layer.openPopup();
+}).addTo(map);
+
 // Define popups and tooltips
 function onEachFeature_mines(feature, layer) {
   layer.bindPopup(
@@ -95,7 +115,7 @@ function onEachFeature_mines(feature, layer) {
     "<tr><th>Présence des FARDC</th><td>" + feature.properties.actor_fardc + "</td></tr>" +
     "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.actor_fardc_freq + "</td></tr>" +
     "<tr><th class='notbold'>&nbsp;&nbsp;Interférences</th><td>" + feature.properties.actor_fardc_interferences + "</td></tr>" +
-    "<tr><th>Présence d'autres groupes armées</th><td>" + feature.properties.actor_nonfardc + "</td></tr>" +
+    "<tr><th>Présence d'autres groupes armés</th><td>" + feature.properties.actor_nonfardc + "</td></tr>" +
     "<tr><th class='notbold'>&nbsp;&nbsp;Frequence</th><td>" + feature.properties.actor_nonfardc_freq + "</td></tr>" +
     "<tr><th class='notbold bottomline'>&nbsp;&nbsp;Interférences</th><td class='bottomline'>" + feature.properties.actor_nonfardc_interferences + "</td></tr>" +
     // "<tr><th>Protections</th><td>" + feature.properties.protection + "</td></tr>" +
@@ -132,7 +152,7 @@ legend.onAdd = function (map) {
   divcontent.innerHTML += '<i class="box" style="background:#89bac3"></i> Permis de recherche<br>'
   divcontent.innerHTML += '<i class="box" style="background:#9abf83"></i> Permis d&apos;exploitation<br>'
   divcontent.innerHTML += '<i class="box" style="background:#c3b0bf"></i> Zone d&apos;exploitation artisanale<br>'
-  divcontent.innerHTML += '<i class="box" style="background:#d88289"></i> Zone interdites<br>'
+  divcontent.innerHTML += '<i class="box" style="background:#d88289"></i> Zone interdite<br>'
   divcontent.innerHTML += '<div class="legendgroup">Autres</div>'
   divcontent.innerHTML += '<i class="box" style="background:#acdc5d"></i> Parc ou réserve'
   div.appendChild(divcontent);
@@ -140,15 +160,10 @@ legend.onAdd = function (map) {
   return div;
 };
 
-// Add interactivity
+// Add interactivity: switch between dry and wet
 [
-  {id: 0, name: "Toutes les mines", color_function: color_mines_default, categories: ['Oui'], labels: ["Mine"]},
-  {id: 1, name: "Traitement au mercure", column: "mercury", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Traitement au mercure", "Pas de traitement au mercure"]},
-  {id: 2, name: "Présence de services d'état", column: "state_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Présence de services d'état", "Pas de présence de services d'état"]},
-  {id: 3, name: "Présence de groupes armées", column: "actor_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Présence de groupes armées", "Pas de présence de groupes armées"]},
-  {id: 4, name: "Femmes enceintes", column: "womenpregnant", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Femmes enceintes", "Pas de femmes enceintes"]},
-  {id: 5, name: "Accidents récents", column: "accidents", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Accidents récents", "Pas d'accidents récents"]},
-  {id: 6, name: "Travail d'enfants", column: "childunder15", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Travail d'enfants", "Pas de travail d'enfants"]}
+  {id: "switcher0", name: "Saison sèche ☀️"},
+  {id: "switcher1", name: "Saison des pluies 🌧️"}
 ].forEach(function(properties) {
   var link = document.createElement('a');
       link.href = '#';
@@ -160,13 +175,80 @@ legend.onAdd = function (map) {
       e.preventDefault();
       e.stopPropagation();
 
-      for (var i = 0; i < menu.children.length; i++) {
-        menu.children[i].className = '';
+      for (var i = 0; i < switcher.children.length; i++) {
+        switcher.children[i].className = '';
+      }
+      this.className = 'active';
+
+      if(this.id == "switcher0") {
+        var pcode_isOpen;
+        layer_mines_wet.eachLayer(function(feature){
+            if(feature.getPopup().isOpen()){
+              pcode_isOpen = feature.feature.properties.pcode;
+          }
+        });
+        layer_mines_wet.remove(map);
+        layer_mines_dry.addTo(map);
+        layer_mines_dry.eachLayer(function(feature){
+            if(feature.feature.properties.pcode == pcode_isOpen){
+              feature.openPopup();
+          }
+        });
+        searchControl._layer = layer_mines_dry;
+      } else {
+        var pcode_isOpen;
+        layer_mines_dry.eachLayer(function(feature){
+            if(feature.getPopup().isOpen()){
+              pcode_isOpen = feature.feature.properties.pcode;
+          }
+        });
+        layer_mines_dry.remove(map);
+        layer_mines_wet.addTo(map);
+        layer_mines_wet.eachLayer(function(feature){
+            if(feature.feature.properties.pcode == pcode_isOpen){
+              feature.openPopup();
+          }
+        });
+        searchControl._layer = layer_mines_wet;
+      }
+
+    }
+
+  switcher.appendChild(link);
+});
+
+// Add interactivity: filter using properties
+[
+  {id: "filter0", name: "Toutes les mines", color_function: color_mines_default, categories: ['Oui'], labels: ["Mine"]},
+  {id: "filter1", name: "Traitement au mercure", column: "mercury", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Traitement au mercure", "Pas de traitement au mercure"]},
+  {id: "filter2", name: "Présence de services d'état", column: "state_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Présence de services d'état", "Pas de présence de services d'état"]},
+  {id: "filter3", name: "Présence de groupes armés", column: "actor_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Présence de groupes armés", "Pas de présence de groupes armés"]},
+  {id: "filter4", name: "Femmes enceintes", column: "womenpregnant", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Femmes enceintes", "Pas de femmes enceintes"]},
+  {id: "filter5", name: "Accidents récents", column: "accidents", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Accidents récents", "Pas d'accidents récents"]},
+  {id: "filter6", name: "Travail d'enfants", column: "childunder15", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Travail d'enfants", "Pas de travail d'enfants"]}
+].forEach(function(properties) {
+  var link = document.createElement('a');
+      link.href = '#';
+      link.id = properties.id;
+      link.className = '';
+      link.innerHTML = properties.name;
+
+  link.onclick = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      for (var i = 0; i < filter.children.length; i++) {
+        filter.children[i].className = '';
       }
       this.className = 'active';
       color_mines = properties.color_function;
 
-      layer_mines.eachLayer(function(featureInstanceLayer) {
+      layer_mines_dry.eachLayer(function(featureInstanceLayer) {
+        featureInstanceLayer.setStyle({
+          fillColor : color_mines(featureInstanceLayer.feature.properties[properties.column])
+        });
+      });
+      layer_mines_wet.eachLayer(function(featureInstanceLayer) {
         featureInstanceLayer.setStyle({
           fillColor : color_mines(featureInstanceLayer.feature.properties[properties.column])
         });
@@ -177,9 +259,12 @@ legend.onAdd = function (map) {
       legend.addTo(map);
     }
 
-  menu.appendChild(link);
+  filter.appendChild(link);
 });
-document.getElementById("0").click()
+
+// Set defaults
+document.getElementById("switcher0").click()
+document.getElementById("filter0").click()
 
 // Add infobox
 var infobox = L.control({position: 'bottomleft'});
@@ -192,24 +277,10 @@ infobox.onAdd = function (map) {
   divcontent.innerHTML += '<h4> Sites miniers aurifères à Mambasa, RDC </h4>';
   divcontent.innerHTML += '<img src="img/ipislogo.png" alt="IPIS Logo" align="right" style="width:50px">'
   divcontent.innerHTML += '<p>Cliquez sur une mine pour découvrir ces characteristiques. Cliquez sur les options dans le coin supérieur droit pour afficer les mines concernées.</p>'
-  divcontent.innerHTML += '<p>Cette carte interactive accompagne le <a href="http://ipisresearch.be">rapport</a> du projet pilote de monitoring de l&apos;or artisanal de Mambasa, Ituri, RDC. Ce pilote a été financé par le <a href="http://www.resolv.org/site-ppa/">PPA</a> et effectuer par <a href="http://ipisresearch.be">IPIS</a> en Juin 2017, après une collecte de données de Janvier 2017 à Juin 2017.</p>'
-  divcontent.innerHTML += '<div class="credits">Rapport: Guillaume de Brier, Hans Merket. Cartographie: Manuel Claeys Bouuaert. Sources: IPIS, <a href="http://portals.flexicadastre.com/drc/en/">CAMI</a> (titres miniers). Contact: <a href="mailto:mapping@ipisresearch.be">mapping@ipisresearch.be</a></div>';
+  divcontent.innerHTML += '<p>Cette carte interactive accompagne le <a href="http://ipisresearch.be">rapport</a> du projet pilote de monitoring de l&apos;or artisanal de Mambasa, Ituri, RDC. Ce pilote a été financé par le <a href="http://www.resolv.org/site-ppa/">PPA</a> et effectuer par <a href="http://ipisresearch.be">IPIS</a> en Juin 2017, après une collecte de données de Janvier à Mars (saison sèche) et de Avril à Juin (saison des pluies) 2017.</p>'
+  divcontent.innerHTML += '<div class="credits">Rapport: Guillaume de Brier, Hans Merket.<br>Cartographie: Manuel Claeys Bouuaert.<br>Contact: <a href="mailto:mapping@ipisresearch.be">mapping@ipisresearch.be</a><br>Sources: IPIS, <a href="http://portals.flexicadastre.com/drc/en/">CAMI</a> (titres miniers).</div>';
   div.appendChild(divcontent);
 
   return div;
 };
 infobox.addTo(map);
-
-// Add search layer
-var searchControl = new L.Control.Search({
-  layer: layer_mines,
-  propertyName: 'name',
-  marker: false,
-  moveToLocation: function(latlng, title, map) {
-    map.setView(latlng, 12);
-  }
-});
-searchControl.on('search:locationfound', function(e) {
-  if(e.layer._popup) e.layer.openPopup();
-});
-map.addControl( searchControl );  //inizialize search control

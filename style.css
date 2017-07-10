@@ -85,15 +85,14 @@ table.infotable th.bottomline, table.infotable td.bottomline {
   padding-bottom: 2px;
 }
 
-.menu-ui {
-  position:absolute;
-  top: 10px;right: 10px;
+.menu {
+  position: absolute;
   z-index: 1000;
   border-radius: 3px;
   width: 200px;
   border: 2px solid rgba(0,0,0,0.2);
 }
-.menu-ui a {
+.menu a {
   background: rgba(255,255,255,1);
   font-size: 13px;
   font-family: sans-serif;
@@ -105,25 +104,34 @@ table.infotable th.bottomline, table.infotable td.bottomline {
   border-bottom: 1px solid rgba(0,0,0,0.25);
   text-align: center;
 }
-.menu-ui a:first-child {
+.menu a:first-child {
   border-radius: 3px 3px 0 0;
   font-weight: bold;
 }
-.menu-ui a:last-child {
+.menu a:last-child {
   border:none;
   border-radius: 0 0 3px 3px;
 }
-.menu-ui a:hover {
+.menu a:hover {
   background: #f8f8f8;
   color: #404040;
 }
-.menu-ui a.active {
+.menu a.active {
   background: #ededed;
   color: #555;
   font-family: sans-serif;
 }
-.menu-ui a.active:hover {
+.menu a.active:hover {
   background: #e8e8e8;
+}
+
+.switcher {
+  top: 10px; right: 10px;
+  font-weight: bold;
+}
+
+.filter {
+  top: 110px; right: 10px;
 }
 
 .legend, .infobox {
@@ -170,7 +178,7 @@ table.infotable th.bottomline, table.infotable td.bottomline {
 }
 
 .infobox {
-  width: 300px;
+  width: 270px;
   min-height: 80px;
 }
 
