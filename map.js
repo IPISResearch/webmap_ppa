@@ -279,7 +279,7 @@ infobox.onAdd = function (map) {
   divcontent.innerHTML += '<img src="img/ipislogo.png" alt="IPIS Logo" align="right" style="width:50px">'
   divcontent.innerHTML += '<p>Cliquez sur une mine pour découvrir ses caractéristiques. Cliquez sur les options dans le coin supérieur droit pour afficher les mines concernées.</p>'
   divcontent.innerHTML += '<p>Cette carte interactive accompagne le <a href="http://ipisresearch.be">rapport</a> du projet pilote de monitoring de l&apos;or artisanal de Mambasa, Ituri, RDC. Ce pilote a été financé par le <a href="http://www.resolv.org/site-ppa/">PPA</a> et effectué par <a href="http://ipisresearch.be">IPIS</a> en Juin 2017, après une collecte de données de Janvier à Mars (saison sèche) et de Avril à Juin (saison des pluies) 2017.</p>'
-  divcontent.innerHTML += '<div class="credits">Rapport: Guillaume de Brier, Hans Merket.<br>Cartographie: Manuel Claeys Bouuaert.<br>Contact: <a href="mailto:mapping@ipisresearch.be">mapping@ipisresearch.be</a><br>Sources: IPIS, <a href="http://portals.flexicadastre.com/drc/en/">CAMI</a> (titres miniers).</div>';
+  divcontent.innerHTML += '<div class="credits">Rapport: Guillaume de Brier, Hans Merket.<br>Cartographie: Manuel Claeys Bouuaert.<br>Contact: <a href="mailto:mapping@ipisresearch.be">mapping@ipisresearch.be</a><br>Sources: IPIS, <a href="http://portals.flexicadastre.com/drc/en/">CAMI</a> (titres miniers).<br>Le code de cette webmap est en accès libre <a href="https://github.com/IPISResearch/webmap_ppa">ici</a>!</div>';
   div.appendChild(divcontent);
 
   return div;
