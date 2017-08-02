@@ -70,6 +70,7 @@ function style_mines(feature) {
 // Style titres
 function style_titres(feature) {
   return {
+    pane: 'titres',
     fillColor: color_titres(feature.properties.group),
     weight: 1,
     opacity: 0.3,
@@ -123,8 +124,8 @@ function onEachFeature_mines(feature, layer) {
     "<tr><th>Structures sanitaires séparées</th><td>" + feature.properties.womensani + "</td></tr>" +
     "<tr><th>Accidents dans les 3 mois passés</th><td>" + feature.properties.accidents + "</td></tr>" +
     "<tr><th class='notbold'>&nbsp;&nbsp;Causes</th><td>" + feature.properties.accidentcauses + "</td></tr>" +
-    "<tr><th>Travail d'enfants</th><td>" + feature.properties.childunder15 + "</td></tr>" +
-    "<tr><th class='notbold'>&nbsp;&nbsp;Types de travail</th><td>" + feature.properties.childunder15work + "</td></tr>" +
+    "<tr><th>Travail d'enfants (< 15 ans)</th><td>" + feature.properties.childunder15 + "</td></tr>" +
+    // "<tr><th class='notbold'>&nbsp;&nbsp;Types de travail</th><td>" + feature.properties.childunder15work + "</td></tr>" +
     "<tr><th>Utilisation de mercure sur le site </th><td>" + feature.properties.mercury + "</td></tr>" +
     "<tbody></table>",
     {maxWidth : 500}
@@ -225,7 +226,7 @@ legend.onAdd = function (map) {
   {id: "filter3", name: "Présence de groupes armés", column: "actor_presence", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Présence de groupes armés", "Pas de présence de groupes armés"]},
   {id: "filter4", name: "Femmes enceintes", column: "womenpregnant", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Femmes enceintes", "Pas de femmes enceintes"]},
   {id: "filter5", name: "Accidents récents", column: "accidents", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Accidents récents", "Pas d'accidents récents"]},
-  {id: "filter6", name: "Travail d'enfants", column: "childunder15", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Travail d'enfants", "Pas de travail d'enfants"]}
+  {id: "filter6", name: "Travail d'enfants (< 15 ans)", column: "childunder15", color_function: color_ouinon, categories: ['Oui', 'Non'], labels: ["Travail d'enfants (< 15 ans)", "Pas de travail d'enfants (< 15 ans)"]}
 ].forEach(function(properties) {
   var link = document.createElement('a');
       link.href = '#';
@@ -276,8 +277,8 @@ infobox.onAdd = function (map) {
 
   divcontent.innerHTML += '<h4> Sites miniers aurifères à Mambasa, RDC </h4>';
   divcontent.innerHTML += '<img src="img/ipislogo.png" alt="IPIS Logo" align="right" style="width:50px">'
-  divcontent.innerHTML += '<p>Cliquez sur une mine pour découvrir ces characteristiques. Cliquez sur les options dans le coin supérieur droit pour afficer les mines concernées.</p>'
-  divcontent.innerHTML += '<p>Cette carte interactive accompagne le <a href="http://ipisresearch.be">rapport</a> du projet pilote de monitoring de l&apos;or artisanal de Mambasa, Ituri, RDC. Ce pilote a été financé par le <a href="http://www.resolv.org/site-ppa/">PPA</a> et effectuer par <a href="http://ipisresearch.be">IPIS</a> en Juin 2017, après une collecte de données de Janvier à Mars (saison sèche) et de Avril à Juin (saison des pluies) 2017.</p>'
+  divcontent.innerHTML += '<p>Cliquez sur une mine pour découvrir ses caractéristiques. Cliquez sur les options dans le coin supérieur droit pour afficher les mines concernées.</p>'
+  divcontent.innerHTML += '<p>Cette carte interactive accompagne le <a href="http://ipisresearch.be">rapport</a> du projet pilote de monitoring de l&apos;or artisanal de Mambasa, Ituri, RDC. Ce pilote a été financé par le <a href="http://www.resolv.org/site-ppa/">PPA</a> et effectué par <a href="http://ipisresearch.be">IPIS</a> en Juin 2017, après une collecte de données de Janvier à Mars (saison sèche) et de Avril à Juin (saison des pluies) 2017.</p>'
   divcontent.innerHTML += '<div class="credits">Rapport: Guillaume de Brier, Hans Merket.<br>Cartographie: Manuel Claeys Bouuaert.<br>Contact: <a href="mailto:mapping@ipisresearch.be">mapping@ipisresearch.be</a><br>Sources: IPIS, <a href="http://portals.flexicadastre.com/drc/en/">CAMI</a> (titres miniers).</div>';
   div.appendChild(divcontent);
 
