@@ -2,7 +2,7 @@
 
 This is (part of) the code behind the webmap of artisanal mining sites around Mambasa, DRC, that was developed as part of a pilot project on the monitoring of artisanal gold mining in Ituri, DRC. The project is sponsored by [PPA](http://www.resolv.org/site-ppa/) and was executed by [IPIS](http://ipisresearch.be).
 
---> ** Visit the webmap [here](http://ipisresearch.be/mapping/webmapping/webmap_ppa/index.html)** <--
+--> **Visit the webmap [here](http://ipisresearch.be/mapping/webmapping/webmap_ppa/index.html)** <--
 
 ## What's in this repository and how can I use it.
 
