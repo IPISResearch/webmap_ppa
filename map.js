@@ -145,7 +145,7 @@ legend.onAdd = function (map) {
   var divcontent = L.DomUtil.create('div', 'info');
 
   divcontent.innerHTML += '<h4> Légende </h4>';
-  divcontent.innerHTML += '<div class="legendgroup">Mines</div>'
+  divcontent.innerHTML += '<div class="legendgroup">Mines <span class="notbold">(taille ~ # travailleurs)</span></div>'
   for (var i = 0; i < legend.properties.categories.length; i++) {
     divcontent.innerHTML += '<i class="circle" style="background:' + color_mines(legend.properties.categories[i]) + '"></i> ' +  legend.properties.labels[i] + '<br>';
   }
